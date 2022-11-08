@@ -57,10 +57,10 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
         incrementedRank = newRank
     } else {
         if (rankings[playerToIncrement].rank_ecr > prevRank) {
-            incrementedRank = rankings[playerToIncrement].rank_ecr - 1
+            incrementedRank = parseInt(rankings[playerToIncrement].rank_ecr) - 1
         }
         if (incrementedRank >= newRank) {
-            incrementedRank = incrementedRank + 1
+            incrementedRank = parseInt(incrementedRank) + 1
         }
     }
     return incrementedRank

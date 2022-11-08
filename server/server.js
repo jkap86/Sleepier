@@ -18,7 +18,12 @@ const dailySync = async () => {
     const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', { timeout: 3000 })
     app.set('allplayers', allplayers.data)
     const state = await axios.get('https://api.sleeper.app/v1/state/nfl')
-    app.set('week', state.data.week)
+    const week = app.get('week')
+    if (week !== state.data.week) {
+        app.set('week', state.data.week)
+        app.set('stats', [])
+    }
+
 }
 dailySync()
 setInterval(dailySync, 1000 * 60 * 60 * 24)
