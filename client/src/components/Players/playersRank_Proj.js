@@ -101,7 +101,6 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         <>
             <tr className="main_header single">
                 <th colSpan={3}
-                    rowSpan={2}
                 >
                     <i
                         onClick={() => exportRankings()}
@@ -115,7 +114,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                         <input type={'file'} className={'hidden clickable'} onChange={(e) => importRankings(e)} />
                     </i>
                 </th>
-                <th colSpan={1 + (edit ? 1 : 0)} rowSpan={edit ? 1 : 2}>
+                <th colSpan={2}>
                     {
                         edit ?
                             <>
@@ -145,14 +144,15 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             </i>
                     }
                 </th>
-                <th colSpan={1} rowSpan={2}>Pos</th>
-                <th colSpan={1} rowSpan={2}>Min</th>
-                <th colSpan={1} rowSpan={2}>Max</th>
-                <th colSpan={2} rowSpan={2}>Opp</th>
+                <th colSpan={1}>Pos</th>
+                <th colSpan={1}>Min</th>
+                <th colSpan={1}>Max</th>
+                <th colSpan={2}>Opp</th>
             </tr>
             {
                 edit ?
                     <tr className="main_header double">
+                        <th colSpan={3}></th>
                         <th className="small">
                             <img
                                 className="thumbnail small"
@@ -160,6 +160,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             />
                         </th>
                         <th className="small">Custom</th>
+                        <th colSpan={5}></th>
                     </tr>
                     : null
 
@@ -181,7 +182,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             key={`${player.id}_${index}`}
                         >
                             <tr>
-                                <td colSpan={9 + (edit ? 1 : 0)}>
+                                <td colSpan={10}>
                                     <table className={`table${1}`}>
                                         <tbody>
                                             <tr
@@ -198,7 +199,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                                                         {allplayers[player.id]?.team}
                                                     </p>
                                                 </td>
-                                                <td colSpan={1} className={'relative'}>
+                                                <td colSpan={edit ? 1 : 2} className={'relative'}>
                                                     {
                                                         edit ?
                                                             allplayers[player.id]?.original_rank ? allplayers[player.id].original_rank :
@@ -252,7 +253,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
                             className={'clickable'}
                             onClick={() => setPage(prevState => prevState + 1)}
                         >
-                            <td colSpan={9}>NEXT PAGE</td>
+                            <td colSpan={10}>NEXT PAGE</td>
                         </tr>
                     </tbody>
                     :

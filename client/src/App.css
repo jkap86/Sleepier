@@ -97,6 +97,7 @@ input.editRank {
 
 i {
   position: relative;
+  font-size: 2vh;
 }
 
 i.green {
@@ -462,14 +463,14 @@ div.rb {
 
 .hidden {
   position: absolute;
-  left: 0;
+
   right: 0;
-  top: 0;
-  bottom: 0;
+
   background-color: transparent;
   border: none;
   color: transparent;
   opacity: 0;
+  margin: 0;
 }
 
 div.page_numbers_wrapper {
