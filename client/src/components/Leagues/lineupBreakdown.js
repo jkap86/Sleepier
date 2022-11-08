@@ -70,9 +70,9 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
             <tbody>
                 {
                     subs
-                        .sort((a, b) => (allplayers[a]?.rank_ecr || 999) -
+                        ?.sort((a, b) => (allplayers[a]?.rank_ecr || 999) -
                             (allplayers[b]?.rank_ecr || 999))
-                        .map((bp, index) =>
+                        ?.map((bp, index) =>
                             <tr
                                 key={`${bp}_${index}`}
                             >
