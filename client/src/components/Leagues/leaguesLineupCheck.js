@@ -2,9 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { avatar } from "../misc_functions";
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, allplayers, syncLeague, user_id }) => {
+const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, allplayers, syncLeague, user_id, includeTaxi }) => {
     const [syncing, setSyncing] = useState(false)
     const [activeSlot, setActiveSlot] = useState(null)
+
+    useEffect(() => {
+        if (rostersVisible !== '' && activeSlot) {
+            const active_league = leagues_display.find(x => x.league_id === rostersVisible)
+            const active_slot = active_league?.lineup_check.find(slot => slot.cur_id === activeSlot.cur_id)
+            setActiveSlot({ ...active_slot })
+        }
+    }, [leagues_display])
 
     const handleSyncLeague = (league_id, user_id) => {
         setSyncing(true)
@@ -141,6 +149,7 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                                     allplayers={allplayers}
                                                                     activeSlot={activeSlot}
                                                                     setActiveSlot={(slot) => setActiveSlot(slot)}
+                                                                    includeTaxi={includeTaxi}
                                                                 />
                                                             </React.Suspense>
                                                         </td>

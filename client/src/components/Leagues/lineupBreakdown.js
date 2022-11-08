@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 
-const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activeSlot, setActiveSlot }) => {
+const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activeSlot, setActiveSlot, includeTaxi }) => {
 
+    useEffect(() => {
+
+    }, [includeTaxi])
 
     console.log(activeSlot)
     const display = lineup_check.map((slot, index) =>

@@ -141,10 +141,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats, in
             allplayers={allplayers}
             syncLeague={syncLeague}
             user_id={user_id}
-            options={{
-                includeTaxi: includeTaxi,
-                rankMargin: rankMargin
-            }}
+            includeTaxi={includeTaxi}
         />
         : lineupCheck === 'League Summary' ?
             <LeaguesStandings
