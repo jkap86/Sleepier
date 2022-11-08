@@ -167,34 +167,6 @@ const Main = () => {
     }, [])
 
     useEffect(() => {
-        const dailySync = setInterval(() => {
-            const fetchSync = async () => {
-                const allplayers = await axios.get('/allplayers')
-                const weekly_rankings = await axios.get('/weeklyrankings')
-                const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
-                setStateAllPlayers(matched_rankings)
-                const stats = await axios.get('/stats')
-                setStateStats(stats.data)
-            }
-            fetchSync()
-        }, 1000 * 60 * 60 * 24)
-        return () => clearInterval(dailySync)
-
-    }, [])
-
-    useEffect(() => {
-        const syncWeeklyRankings = setInterval(() => {
-            const fetchSync = async () => {
-                const weekly_rankings = await axios.get('/weeklyrankings')
-                const matched_rankings = await match_weekly_rankings(weekly_rankings.data, stateAllPlayers)
-                setStateAllPlayers(matched_rankings)
-            }
-            fetchSync()
-        }, 1000 * 60 * 15)
-        return () => clearInterval(syncWeeklyRankings)
-    }, [stateAllPlayers])
-
-    useEffect(() => {
         setIsLoading(true);
         const fetchLeagues = async (user) => {
             const leagues = await axios.get('/leagues', {
