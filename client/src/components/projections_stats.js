@@ -68,7 +68,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
 
 export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, stateStats) => {
     const teams_already_played = Array.from(new Set(stateStats.map(x => x.team)))
-    console.log(teams_already_played)
+
     const position_map = {
         'QB': ['QB'],
         'RB': ['RB', 'FB'],

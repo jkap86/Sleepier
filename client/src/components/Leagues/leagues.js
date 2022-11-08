@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getLineupCheck } from '../projections_stats';
+import taxi from '../../images/taxi.png';
 const Search = React.lazy(() => import('../search'));
 const LeaguesStandings = React.lazy(() => import('./leaguesStandings'));
 const LeaguesLineupCheck = React.lazy(() => import('./leaguesLineupCheck'));
 
-const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) => {
+const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats, includeTaxi, rankMargin, setIncludeTaxi, setRankMargin }) => {
     const [leagues, setLeagues] = useState([])
     const [searched, setSearched] = useState('')
     const [page, setPage] = useState(1)
@@ -15,8 +16,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
         by: 'default',
         descending: true
     })
-    const [includeTaxi, setIncludeTaxi] = useState(1)
-    const [rankMargin, setRankMargin] = useState(0)
+
 
 
 
@@ -192,18 +192,18 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats }) 
                     Lineup Check
                 </button>
             </div>
-            <div className={'lineupcheck_options'} hidden={lineupCheck !== 'Lineup Check'}>
+            <div className={'lineupcheck_options'} >
+                <div className={'lineupcheck_option'} hidden={lineupCheck !== 'Lineup Check'}>
+                    <img
+                        className={'taxi'}
+                        src={taxi}
+                    />
+                    <i
+                        onClick={() => setIncludeTaxi(prevState => prevState === 1 ? -1 : 1)}
+                        className={`fa fa-ban clickable ${includeTaxi > 0 ? 'hidden' : null}`}>
 
-                <label>
-                    Include Taxi
-                    <select
-                        value={includeTaxi}
-                        onChange={(e) => setIncludeTaxi(e.target.value)}
-                    >
-                        <option value={1}>True</option>
-                        <option value={-1}>False</option>
-                    </select>
-                </label>
+                    </i>
+                </div>
                 <label>
                     Rank Margin
                     <select

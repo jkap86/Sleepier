@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect } from "react";
 
-const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => {
-    const [activeSlot, setActiveSlot] = useState(null)
+const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activeSlot, setActiveSlot }) => {
 
+
+    console.log(activeSlot)
     const display = lineup_check.map((slot, index) =>
         <tbody key={`${slot.cur_id}_${index}`}>
             <tr
@@ -10,7 +11,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers }) => 
                     activeSlot?.slot === slot.slot && activeSlot?.index === index ?
                         `row${type} active clickable` : `row${type} clickable`
                 }
-                onClick={() => setActiveSlot(prevState => slot === prevState ? null : slot)}
+                onClick={() => setActiveSlot(slot)}
             >
                 <td colSpan={1}
                     className={(slot.subs.length + slot.subs_taxi?.length) > 0 ? 'sub' : null}

@@ -14,6 +14,8 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
     const [tab, setTab] = useState('Leagues');
     const [type1, setType1] = useState('All');
     const [type2, setType2] = useState('All');
+    const [includeTaxi, setIncludeTaxi] = useState(1)
+    const [rankMargin, setRankMargin] = useState(0)
 
     useEffect(() => {
         const fetchFiltered = () => {
@@ -252,6 +254,10 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         avatar={avatar}
                         syncLeague={syncLeague}
                         stateStats={stateStats}
+                        includeTaxi={includeTaxi}
+                        rankMargin={rankMargin}
+                        setIncludeTaxi={setIncludeTaxi}
+                        setRankMargin={setRankMargin}
                     />
                 </React.Suspense>
             break;

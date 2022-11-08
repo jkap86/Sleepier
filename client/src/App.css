@@ -119,6 +119,16 @@ i.right {
   float: right;
 }
 
+i.fa-ban,
+i.fa-ban::before {
+  font-size: 5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+}
+
 /* Hompage */
 div.home_wrapper {
   width: 100%;
@@ -517,6 +527,14 @@ img.thumbnail.small {
   height: 2.5rem;
 }
 
+img.taxi {
+  box-shadow: none;
+  margin: .5rem;
+  width: 4rem;
+  height: 4rem;
+
+}
+
 th.small {
   font-size: 75%;
   overflow-x: scroll;
@@ -674,6 +692,15 @@ div.nav1>div.lineupcheck_options {
   top: 0;
   bottom: 0;
   right: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  width: 25%;
+}
+
+div.lineupcheck_option {
+  position: relative;
+  width: 25%;
 }
 
 div.nav1>div.lineupcheck_options>label {

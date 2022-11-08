@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { avatar } from "../misc_functions";
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
 const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRef, rostersVisible, setRostersVisible, allplayers, syncLeague, user_id }) => {
     const [syncing, setSyncing] = useState(false)
+    const [activeSlot, setActiveSlot] = useState(null)
 
     const handleSyncLeague = (league_id, user_id) => {
         setSyncing(true)
@@ -138,6 +139,8 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
                                                                     lineup_check={league.lineup_check}
                                                                     avatar={avatar}
                                                                     allplayers={allplayers}
+                                                                    activeSlot={activeSlot}
+                                                                    setActiveSlot={(slot) => setActiveSlot(slot)}
                                                                 />
                                                             </React.Suspense>
                                                         </td>
