@@ -189,7 +189,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats, in
                     Lineup Check
                 </button>
             </div>
-            <div className={'lineupcheck_options'} >
+            <div className={'lineupcheck_options'}>
                 <div className={'lineupcheck_option'} hidden={lineupCheck !== 'Lineup Check'}>
                     <img
                         className={'taxi'}
@@ -201,7 +201,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats, in
 
                     </i>
                 </div>
-                <label>
+                <label className={lineupCheck === 'Lineup Check' ? null : 'hidden'}>
                     Rank Margin
                     <select
                         value={rankMargin}

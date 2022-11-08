@@ -14,6 +14,12 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
         }
     }, [leagues_display])
 
+    useEffect(() => {
+        if (!rostersVisible) {
+            setActiveSlot(null)
+        }
+    }, [rostersVisible])
+
     const handleSyncLeague = (league_id, user_id) => {
         setSyncing(true)
         syncLeague(league_id, user_id)
