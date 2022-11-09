@@ -111,7 +111,7 @@ const Leagues = ({ prop_leagues, allplayers, user_id, syncLeague, stateStats, in
             const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), stateStats)
             const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
             const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id).length
-            const so_slots = league_check.filter(slot => (slot.subs?.length > 0) || (slot.subs_taxi?.length > 0)).length
+            const so_slots = league_check.filter(slot => !slot.isInOptimal).length
             return {
                 ...l,
                 empty_slots: empty_slots + bye_slots,

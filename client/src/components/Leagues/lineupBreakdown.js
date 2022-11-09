@@ -8,10 +8,10 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                     activeSlot?.slot === slot.slot && activeSlot?.index === index ?
                         `row${type} active clickable` : `row${type} clickable`
                 }
-                onClick={() => setActiveSlot(prevState => prevState ? null : slot)}
+                onClick={() => setActiveSlot(prevState => prevState?.cur_id === slot.cur_id ? null : slot)}
             >
                 <td colSpan={1}
-                    className={(slot.subs.length + slot.subs_taxi?.length) > 0 ? 'sub' : null}
+                    className={(!slot.isInOptimal) > 0 ? 'sub' : null}
                 >
                     {slot.slot_abbrev}
                 </td>
@@ -20,15 +20,22 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                         {
                             avatar(slot.cur_id, allplayers[slot.cur_id]?.full_name, 'player')
                         }
-                        {allplayers[slot.cur_id]?.full_name}
+                        {parseInt(slot.cur_id) === 0 ? 'Empty' : allplayers[slot.cur_id]?.full_name}
+                        {
+                            allplayers[slot.cur_id]?.injury ?
+                                <p className={'red small'}>
+                                    {allplayers[slot.cur_id]?.injury}
+                                </p>
+                                : null
+                        }
                     </p>
                 </td>
                 <td>
-                    {slot.cur_rank === 1000 ? 'BYE' : slot.cur_rank}
+                    {slot.cur_rank === 1000 ? 'BYE' : slot.cur_rank || '-'}
                 </td>
                 <td>
                     {
-                        allplayers[slot.cur_id]?.rank_ecr >= 999 ? '-' :
+                        !(allplayers[slot.cur_id]?.rank_ecr <= 999) ? '-' :
                             allplayers[slot.cur_id]?.position === 'FB' ? 'RB' : allplayers[slot.cur_id]?.position + "" +
                                 (Object.keys(allplayers)
                                     .filter(ap =>
@@ -43,7 +50,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
         </tbody>
     )
 
-    const subs = activeSlot ? activeSlot.subs :
+    const subs = activeSlot ? activeSlot.swaps || activeSlot.subs :
         roster.players.filter(p => !roster.starters?.includes(p) && !roster.taxi?.includes(p))
     const taxi = activeSlot ? activeSlot.subs_taxi : roster.taxi
 
@@ -63,7 +70,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
             <thead>
                 <tr className={'single'}>
                     <th colSpan={9}>
-                        {activeSlot ? 'Better Options' : 'Bench'}
+                        {activeSlot?.swaps ? 'Swap With' : activeSlot ? 'Better Options' : 'Bench'}
                     </th>
                 </tr>
             </thead>
@@ -85,6 +92,13 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                                             avatar(bp, allplayers[bp]?.full_name, 'player')
                                         }
                                         {allplayers[bp]?.full_name}
+                                        {
+                                            allplayers[bp]?.injury ?
+                                                <p className={'red small'}>
+                                                    {allplayers[bp]?.injury}
+                                                </p>
+                                                : null
+                                        }
                                     </p>
                                 </td>
                                 <td colSpan={1}>
@@ -133,10 +147,17 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                                                 avatar(bp, allplayers[bp]?.full_name, 'player')
                                             }
                                             {allplayers[bp]?.full_name}
+                                            {
+                                                allplayers[bp]?.injury ?
+                                                    <p className={'red small'}>
+                                                        {allplayers[bp]?.injury}
+                                                    </p>
+                                                    : null
+                                            }
                                         </p>
                                     </td>
                                     <td colSpan={1}>
-                                        {allplayers[bp]?.rank_ecr || '-'}
+                                        {allplayers[bp]?.rank_ecr === 1000 ? 'BYE' : allplayers[bp]?.rank_ecr || 999}
                                     </td>
                                     <td colSpan={2}>
                                         {

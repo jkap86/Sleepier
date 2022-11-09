@@ -22,11 +22,37 @@ const dailySync = async () => {
     if (week !== state.data.week) {
         app.set('week', state.data.week)
         app.set('stats', [])
+        getProjections(state.data.week)
     }
-
 }
 dailySync()
 setInterval(dailySync, 1000 * 60 * 60 * 24)
+
+const getProjections = async (week) => {
+    const status = {
+        'Questionable': 'Q',
+        'Out': 'O',
+        'IR': 'IR',
+        'Doubtful': 'D',
+        'Sus': 'SUS'
+    }
+    if (week >= 1 && week <= 18) {
+        const allplayers = app.get('allplayers')
+        const projections = await axios.get(`https://api.sleeper.com/projections/nfl/2022/${week}?season_type=regular&position[]=FLEX&position[]=QB&position[]=RB&position[]=SUPER_FLEX&position[]=TE&position[]=WR&order_by=ppr`)
+        projections.data.map(proj => {
+            allplayers[proj.player_id] = {
+                ...allplayers[proj.player_id],
+                injury: status[proj.player?.injury_status]
+            }
+        })
+        app.set('allplayers', allplayers)
+    }
+}
+
+setInterval(() => {
+    getProjections(app.get('week'))
+}, 1000 * 60 * 15)
+
 
 const syncStats = async () => {
     const date = new Date();
@@ -45,6 +71,8 @@ const syncStats = async () => {
     }
 
 }
+
+
 const getStats = async () => {
     const state = await axios.get('https://api.sleeper.app/v1/state/nfl')
     const week = state.data.week
