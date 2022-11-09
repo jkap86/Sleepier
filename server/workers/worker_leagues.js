@@ -14,12 +14,12 @@ axiosRetry(axios, {
 const getLeagueInfo = async (leagues, user_id) => {
     let leagues_detailed = []
     await Promise.all(leagues.filter(x => x.status === "in_season").map(async (league, index) => {
-        const [rosters, users] = await Promise.all([
+        let [rosters, users] = await Promise.all([
+
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/rosters`),
             await axios.get(`https://api.sleeper.app/v1/league/${league.league_id}/users`)
         ])
-
-        rosters.data
+        rosters?.data
             ?.sort((a, b) => b.settings.fpts - a.settings.fpts)
             ?.map((roster, index) => {
                 roster['rank_points'] = index + 1
@@ -27,7 +27,7 @@ const getLeagueInfo = async (leagues, user_id) => {
             })
 
         const standings = (
-            rosters.data
+            rosters?.data
                 ?.sort((a, b) => b.settings.wins - a.settings.wins || a.settings.losses - b.settings.losses ||
                     b.settings.fpts - a.settings.fpts)
                 ?.map((roster, index) => {
@@ -56,8 +56,13 @@ const getLeagueInfo = async (leagues, user_id) => {
 
 router.get('/leagues', async (req, res) => {
     const user_id = req.query.user_id
-    const leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`)
-    const leagues_detailed = await getLeagueInfo(leagues.data, user_id)
+    let leagues;
+    try {
+        leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`)
+    } catch (error) {
+        console.log(error)
+    }
+    const leagues_detailed = await getLeagueInfo(leagues?.data, user_id)
     res.send({
         leagues: leagues_detailed
     })
