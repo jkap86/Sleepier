@@ -33,31 +33,26 @@ const LeaguesLineupCheck = ({ sortLeagues, leagues_display, page, setPage, rowRe
             <tr className="main_header single">
                 <th colSpan={3}
                     className={'clickable'}
-                    onClick={() => sortLeagues('League')}
                 >
                     League
                 </th>
                 <th colSpan={1}
                     className={'small clickable'}
-                    onClick={() => sortLeagues('Empty Slots')}
                 >
                     Empty/Bye Slots
                 </th>
                 <th colSpan={1}
                     className={'small clickable'}
-                    onClick={() => sortLeagues('SO Slots')}
                 >
                     Suboptimal Slots
                 </th>
                 <th colSpan={1}
                     className={'small clickable'}
-                    onClick={() => sortLeagues('SO Slots')}
                 >
                     QBs in SF
                 </th>
                 <th colSpan={1}
                     className={'small clickable'}
-                    onClick={() => sortLeagues('SO Slots')}
                 >
                     Optimal Lineup
                 </th>
