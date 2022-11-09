@@ -14,8 +14,14 @@ app.use(express.json());
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 
+const options = {
+    headers: {
+        'content-type': 'application/json'
+    }
+}
+
 const dailySync = async () => {
-    const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', { timeout: 3000 })
+    const allplayers = await axios.get('https://api.sleeper.app/v1/players/nfl', options)
     app.set('allplayers', allplayers.data)
     const state = await axios.get('https://api.sleeper.app/v1/state/nfl')
     const week = app.get('week')
