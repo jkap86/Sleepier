@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { avatar } from './misc_functions';
 import sleeperLogo from '../images/sleeper_icon.png';
+const LeaguesLineupCheck = React.lazy(() => import('./Leagues/leaguesLineupCheck'));
 const Leagues = React.lazy(() => import('./Leagues/leagues'));
 const Players = React.lazy(() => import('./Players/players'));
 const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
@@ -11,7 +12,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
     const [stateLeaguematesFiltered, setStateLeaguematesFiltered] = useState([]);
     const [statePlayerSharesFiltered, setStatePlayerSharesFiltered] = useState([]);
-    const [tab, setTab] = useState('Leagues');
+    const [tab, setTab] = useState('Lineup Check');
     const [type1, setType1] = useState('All');
     const [type2, setType2] = useState('All');
     const [includeTaxi, setIncludeTaxi] = useState(1)
@@ -244,6 +245,22 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
 
     let display;
     switch (tab) {
+        case 'Lineup Check':
+            display = isLoading ? loadingMessage :
+                <React.Suspense fallback={loadingMessage}>
+                    <LeaguesLineupCheck
+                        prop_leagues={stateLeaguesFiltered}
+                        allplayers={stateAllPlayers}
+                        syncLeague={syncLeague}
+                        user_id={state_user.user_id}
+                        includeTaxi={includeTaxi}
+                        setIncludeTaxi={setIncludeTaxi}
+                        rankMargin={rankMargin}
+                        setRankMargin={setRankMargin}
+                        stateStats={stateStats}
+                    />
+                </React.Suspense>
+            break;
         case 'Leagues':
             display = isLoading ? loadingMessage :
                 <React.Suspense fallback={loadingMessage}>
@@ -252,12 +269,6 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         allplayers={stateAllPlayers}
                         user_id={state_user.user_id}
                         avatar={avatar}
-                        syncLeague={syncLeague}
-                        stateStats={stateStats}
-                        includeTaxi={includeTaxi}
-                        rankMargin={rankMargin}
-                        setIncludeTaxi={setIncludeTaxi}
-                        setRankMargin={setRankMargin}
                     />
                 </React.Suspense>
             break;
@@ -335,14 +346,19 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                                 </h1>
                                 <div className="navbar">
                                     <button
-                                        className={tab === 'Leagues' ? 'active clickable' : 'clickable'}
-                                        onClick={() => setTab('Leagues')}>
-                                        Leagues
+                                        className={tab === 'Lineup Check' ? 'active clickable' : 'clickable'}
+                                        onClick={() => setTab('Lineup Check')}>
+                                        Lineups
                                     </button>
                                     <button
                                         className={tab === 'Players' ? 'active clickable' : 'clickable'}
                                         onClick={() => setTab('Players')}>
                                         Players
+                                    </button>
+                                    <button
+                                        className={tab === 'Leagues' ? 'active clickable' : 'clickable'}
+                                        onClick={() => setTab('Leagues')}>
+                                        Leagues
                                     </button>
                                     <button
                                         className={tab === 'Leaguemates' ? 'active clickable' : 'clickable'}

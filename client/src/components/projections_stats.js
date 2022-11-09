@@ -114,20 +114,16 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     let lineup_check = []
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
-        const subs_all = roster.players
+        const better_options = roster.players
             .filter(p =>
                 !roster.starters.includes(p) &&
-                !roster.taxi?.includes(p) &&
-                position_map[slot].includes(allplayers[p]?.position)
-            )
-        const subs = subs_all.filter(p =>
-            allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
-        )
-        const subs_taxi = (includeTaxi < 0 ? [] :
-            roster.taxi?.filter(p =>
+                (!roster.taxi?.includes(p) || includeTaxi > 0) &&
                 position_map[slot].includes(allplayers[p]?.position) &&
                 allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
-            ) || []
+            )
+
+        const optimal_options = better_options.filter(p =>
+            optimal_lineup.includes(p)
         )
 
         const isInOptimal = optimal_lineup.includes(cur_id)
@@ -145,22 +141,54 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_rank: allplayers[cur_id]?.rank_ecr,
-            subs: subs.filter(x => optimal_lineup.includes(x)),
-            subs_taxi: subs_taxi.filter(x => optimal_lineup.includes(x)),
+            better_options: better_options.filter(p => !optimal_lineup.includes(p)),
+            optimal_options: optimal_options,
             isInOptimal: isInOptimal,
             optimal_lineup: optimal_lineup
         })
     })
 
     lineup_check = lineup_check.map(slot => {
-        if (!slot.isInOptimal && !(slot.subs.length > 0) && !(slot.subs_taxi.length > 0)) {
+        if (!slot.isInOptimal && !(slot.optimal_options.length > 0)) {
             const swaps = optimal_lineup
                 .filter(p =>
                     position_map[slot.slot].includes(allplayers[p]?.position) &&
                     slot.cur_rank > (allplayers[p]?.rank_ecr) &&
-                    slot.slot !== lineup_check.find(x => x.cur_id === p)?.slot
+                    slot.slot !== lineup_check.find(x => x.cur_id === p)?.slot &&
+                    slot.optimal_options.length === 0
+
                 )
+
+            const newSlots = swaps.map(s => {
+                const newSlot = lineup_check.find(x => x.cur_id === s)?.slot
+                if (newSlot) {
+                    return position_map[newSlot]
+                }
+            }).flat()
+            const swap_options = (
+                roster.players
+                    .filter(p =>
+                        !roster.starters.includes(p) &&
+                        (!roster.taxi?.includes(p) || includeTaxi > 0) &&
+                        newSlots?.includes(allplayers[p]?.position) &&
+                        optimal_lineup.includes(p)
+                    )
+            )
+
+            const better_options_updated = (
+                roster.players
+                    .filter(p =>
+                        !roster.starters.includes(p) &&
+                        (!roster.taxi?.includes(p) || includeTaxi > 0) &&
+                        position_map[slot]?.includes(allplayers[p]?.position) &&
+                        allplayers[p]?.rank_ecr < (allplayers[slot.cur_id]?.rank_ecr - rankMargin)
+                    )
+            )
+
+
             slot.swaps = swaps
+            slot.swap_options = swap_options
+            slot.better_options = better_options_updated
         }
         return slot
     })

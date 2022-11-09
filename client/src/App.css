@@ -541,6 +541,10 @@ th.small {
   overflow-x: scroll;
 }
 
+td.transparent {
+  background-color: transparent !important;
+}
+
 td.left,
 th.left {
   text-align: left;
@@ -787,6 +791,19 @@ table.table2.subs {
   width: 50%;
   display: inline-table;
   vertical-align: top;
+  font-size: 1.5rem;
+}
+
+table.table2.subs {
+  border-collapse: collapse;
+}
+
+table.table2.subs tbody.lineup_option {
+  border: 1rem solid var(--color2);
+}
+
+table.table2.subs tbody.lineup_option tr.lineup_option>td {
+  background-color: #152038;
 }
 
 table.table2.league,
