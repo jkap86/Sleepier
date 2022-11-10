@@ -157,11 +157,9 @@ const Main = () => {
         const fetchData = async () => {
             const allplayers = await axios.get('/allplayers')
             const weekly_rankings = await axios.get('/weeklyrankings')
-            const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data)
+            const schedule = await axios.get('/schedule')
+            const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data, schedule.data)
             setStateAllPlayers(matched_rankings)
-            const stats = await axios.get('/stats')
-
-            setStateStats(stats.data)
         }
         fetchData()
     }, [])

@@ -4,6 +4,12 @@ const router = express.Router()
 const axios = require('axios')
 const cheerio = require('cheerio')
 
+const options = {
+    headers: {
+        'content-type': 'application/json'
+    }
+}
+
 const getWeeklyRankings = async () => {
     const html_sf = await axios.get('https://www.fantasypros.com/nfl/rankings/ppr-superflex.php')
 

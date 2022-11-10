@@ -738,6 +738,7 @@ table.main div.nav2 {
   height: 5rem;
   text-align: left;
   display: flex;
+  justify-content: space-evenly;
 }
 
 table.main div.nav2 ol.page_numbers {
@@ -784,6 +785,32 @@ table.table1 {
 table.table2.lineup td.sub {
   border: 0.25rem solid red;
   color: red;
+}
+
+p.MNF {
+  color: var(--te);
+}
+
+p.TNF {
+  color: var(--wr);
+}
+
+p.MNF,
+p.TNF {
+  width: fit-content;
+  height: fit-content;
+  display: inline-block;
+  margin: 0;
+}
+
+td.MNF,
+td.SNF {
+  border: 0.25rem solid var(--te);
+}
+
+td.TNF,
+td.AM {
+  border: 0.25rem solid var(--wr);
 }
 
 table.table2.lineup,
@@ -913,6 +940,10 @@ table.table2 thead {
 
 table.table2 tr {
   filter: drop-shadow(0 0 2rem black);
+}
+
+table.table2 tr.MNF {
+  color: 1rem solid red !important;
 }
 
 table.table2 tr.row2.active {

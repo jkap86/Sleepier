@@ -3,11 +3,17 @@ const router = express.Router()
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
 
+const options = {
+    headers: {
+        'content-type': 'application/json'
+    }
+}
+
 const syncLeague = async (league_id, user_id) => {
     const [league, rosters, users] = await Promise.all([
-        await axios.get(`https://api.sleeper.app/v1/league/${league_id}`),
-        await axios.get(`https://api.sleeper.app/v1/league/${league_id}/rosters`),
-        await axios.get(`https://api.sleeper.app/v1/league/${league_id}/users`)
+        await axios.get(`https://api.sleeper.app/v1/league/${league_id}`, options),
+        await axios.get(`https://api.sleeper.app/v1/league/${league_id}/rosters`, options),
+        await axios.get(`https://api.sleeper.app/v1/league/${league_id}/users`, options)
     ])
     rosters.data
         .sort((a, b) => b.settings.fpts - a.settings.fpts)

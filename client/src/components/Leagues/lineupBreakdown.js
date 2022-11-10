@@ -11,7 +11,12 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                 onClick={() => setActiveSlot(prevState => prevState?.cur_id === slot.cur_id ? null : slot)}
             >
                 <td colSpan={1}
-                    className={(!slot.isInOptimal) ? 'sub' : null}
+                    className={
+                        !slot.isInOptimal || slot.cur_id === 0 || slot.cur_rank === 1000 ||
+                            ['E', 'L'].includes(slot.isInOptimalOrdered) || (slot.cur_abbrev === 'SF' && allplayers[slot.cur_id]?.position !== 'QB')
+                            ? 'sub'
+                            : null
+                    }
                 >
                     {slot.slot_abbrev}
                 </td>
@@ -31,9 +36,10 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                                 </p>
                                 : null
                         }
+
                     </p>
                 </td>
-                <td>
+                <td className={slot.tv_slot}>
                     {slot.cur_rank === 1000 ? 'BYE' : slot.cur_rank || '-'}
                 </td>
                 <td>
@@ -50,7 +56,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                     }
                 </td>
             </tr>
-        </tbody>
+        </tbody >
     )
     const optimal_options = (
         !activeSlot ? roster.players.filter(p => !roster.starters?.includes(p) && !roster.taxi?.includes(p)) :

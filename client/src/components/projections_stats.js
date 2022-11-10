@@ -1,5 +1,5 @@
 
-export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
+export const match_weekly_rankings = async (weekly_rankings, allplayers, schedule) => {
     const week = weekly_rankings.find(w_r => w_r.week).week
     const teams_playing = Array.from(new Set(weekly_rankings.map(w_r => w_r.player_team_id)))
     weekly_rankings.map(fp_id => {
@@ -35,11 +35,34 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers) => {
                 )
             )
         )
+
         if (match_id) {
+            const gametime = schedule.find(s =>
+                s.Week === parseInt(fp_id.week) &&
+                ([s.AwayTeam, s.HomeTeam].includes(fp_id.player_team_id.replace('JAC', 'JAX')) && ![s.AwayTeam, s.HomeTeam].includes('BYE'))
+            )?.Date
+
+            let gametime_date;
+            let day;
+            let hour;
+            if (gametime) {
+                gametime_date = new Date(gametime)
+                day = gametime_date.getDay()
+                hour = gametime_date.getHours()
+
+            }
+
             allplayers[match_id] = {
                 ...allplayers[match_id],
-                ...fp_id
+                ...fp_id,
+                gametime: (day === undefined || hour === undefined ? 99.99 :
+                    parseFloat(`${day < 4 ? day + 7 : day}.${hour}`)
+                ),
+                gametime_day: day || 99,
+                gametime_hour: hour || 99
             }
+
+            console.log(allplayers[match_id].gametime)
         } else {
             console.log(`${fp_id.player_name} NOT MATCHED!!!`)
         }
@@ -66,8 +89,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
     return incrementedRank
 }
 
-export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, stateStats) => {
-    const teams_already_played = Array.from(new Set(stateStats.map(x => x.team)))
+export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin) => {
 
     const position_map = {
         'QB': ['QB'],
@@ -83,51 +105,49 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
     let player_ranks = roster.players.filter(x =>
-        (includeTaxi > 0 || !roster.taxi?.includes(x)) &&
-        !teams_already_played.includes(allplayers[x]?.team)
+        (includeTaxi > 0 || !roster.taxi?.includes(x))
     ).map(player => {
-        let rank = (allplayers[player]?.rank_ecr || 999)
+        allplayers[player].rank_ecr = allplayers[player]?.rank_ecr || 999
+        allplayers[player].gametime = allplayers[player]?.gametime || 99.99
+        let rank = allplayers[player]?.rank_ecr
         if (!roster.starters?.includes(player)) {
             rank = (rank + rankMargin)
 
         } else {
-            rank = allplayers[player]?.rank_ecr || 999
+            rank = allplayers[player]?.rank_ecr
         }
 
         return {
             id: player,
-            rank: parseInt(rank)
+            rank: parseInt(rank),
+            gametime: allplayers[player]?.gametime
         }
     })
 
     let optimal_lineup = []
+    let player_ranks_filtered = player_ranks
     starting_slots.map((slot, index) => {
-        const slot_options = player_ranks
+        const slot_options = player_ranks_filtered
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
-            .sort((a, b) => a.rank - b.rank)
+            .sort((a, b) => a.rank - b.rank || a.gametime_day - b.gametime_day || a.gametime_hour - b.gametime_hour)
 
         const optimal_player = slot_options[0]?.id
-        player_ranks = player_ranks.filter(p => p.id !== optimal_player)
-        optimal_lineup.push(optimal_player)
+        player_ranks_filtered = player_ranks_filtered.filter(p => p.id !== optimal_player)
+        optimal_lineup[index] = optimal_player
     })
 
     let lineup_check = []
+
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
-        const better_options = roster.players
-            .filter(p =>
-                !roster.starters.includes(p) &&
-                (!roster.taxi?.includes(p) || includeTaxi > 0) &&
-                position_map[slot].includes(allplayers[p]?.position) &&
-                allplayers[p]?.rank_ecr < (allplayers[cur_id]?.rank_ecr - rankMargin)
-            )
 
-        const optimal_options = better_options.filter(p =>
-            optimal_lineup.includes(p)
+        const optimal_options = optimal_lineup.filter(op =>
+            !roster.starters.includes(op) &&
+            (allplayers[op]?.rank_ecr < allplayers[cur_id]?.rank_ecr) &&
+            position_map[slot].includes(allplayers[op]?.position)
         )
 
-        const isInOptimal = optimal_lineup.includes(cur_id)
-
+        const isInOptimal = optimal_options.length > 1 ? optimal_lineup.includes(cur_id) : true
 
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
@@ -141,57 +161,57 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             slot_abbrev: slot_abbrev,
             cur_id: cur_id,
             cur_rank: allplayers[cur_id]?.rank_ecr,
-            better_options: better_options.filter(p => !optimal_lineup.includes(p)),
+            gametime: allplayers[cur_id]?.gametime,
+            gametime_day: allplayers[cur_id]?.gametime_day,
+            gametime_hour: allplayers[cur_id]?.gametime_hour,
             optimal_options: optimal_options,
             isInOptimal: isInOptimal,
-            optimal_lineup: optimal_lineup
+
         })
     })
-
-    lineup_check = lineup_check.map(slot => {
-        if (!slot.isInOptimal && !(slot.optimal_options.length > 0)) {
-            const swaps = optimal_lineup
-                .filter(p =>
-                    position_map[slot.slot].includes(allplayers[p]?.position) &&
-                    slot.cur_rank > (allplayers[p]?.rank_ecr) &&
-                    slot.slot !== lineup_check.find(x => x.cur_id === p)?.slot &&
-                    slot.optimal_options.length === 0
-
-                )
-
-            const newSlots = swaps.map(s => {
-                const newSlot = lineup_check.find(x => x.cur_id === s)?.slot
-                if (newSlot) {
-                    return position_map[newSlot]
-                }
-            }).flat()
-            const swap_options = (
-                roster.players
-                    .filter(p =>
-                        !roster.starters.includes(p) &&
-                        (!roster.taxi?.includes(p) || includeTaxi > 0) &&
-                        newSlots?.includes(allplayers[p]?.position) &&
-                        optimal_lineup.includes(p)
-                    )
+    lineup_check = lineup_check.map((lc) => {
+        let isInOptimalOrdered;
+        let tv_slot = '***'
+        if (lc.gametime < 7 && lc.isInOptimal) {
+            const isInFlex = lc.slot !== allplayers[lc.cur_id]?.position
+            const samePos = lineup_check.filter(x =>
+                allplayers[x.cur_id]?.position === allplayers[lc.cur_id]?.position &&
+                allplayers[x.cur_id]?.position === x.slot &&
+                x.gametime > lc.gametime
             )
 
-            const better_options_updated = (
-                roster.players
-                    .filter(p =>
-                        !roster.starters.includes(p) &&
-                        (!roster.taxi?.includes(p) || includeTaxi > 0) &&
-                        position_map[slot]?.includes(allplayers[p]?.position) &&
-                        allplayers[p]?.rank_ecr < (allplayers[slot.cur_id]?.rank_ecr - rankMargin)
-                    )
+            isInOptimalOrdered = (isInFlex && samePos.length > 0) ? 'E' : null
+            if (Math.floor(lc.gametime) === 4) {
+                tv_slot = 'TNF'
+            }
+        } else if (lc.isInOptimal && lc.gametime > 7.16) {
+            const isInFlex = lc.slot !== allplayers[lc.cur_id]?.position
+            const samePos = lineup_check.filter(x =>
+                allplayers[x.cur_id]?.position === allplayers[lc.cur_id]?.position &&
+                allplayers[x.cur_id]?.position !== x.slot &&
+                x.gametime < lc.gametime
             )
 
-
-            slot.swaps = swaps
-            slot.swap_options = swap_options
-            slot.better_options = better_options_updated
+            if (Math.floor(lc.gametime) === 7) {
+                tv_slot = 'SNF'
+            } else if (Math.floor(lc.gametime) === 8) {
+                tv_slot = 'MNF'
+            }
+            isInOptimalOrdered = (!isInFlex && samePos.length > 0) ? 'L' : null
+        } else {
+            if (Math.round(lc.gametime) === 7) {
+                tv_slot = lc.gametime < 7.13 ? 'AM' : null
+            }
         }
-        return slot
+
+        return {
+            ...lc,
+            isInOptimalOrdered: isInOptimalOrdered,
+            tv_slot: tv_slot
+        }
     })
+
+
     return lineup_check
 }
 
