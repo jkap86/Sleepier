@@ -54,7 +54,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
 
     useEffect(() => {
         setPage(1)
-    }, [searched, prop_leagues])
+    }, [searched])
 
     const handleSyncLeague = (league_id, user_id) => {
         setSyncing(true)
