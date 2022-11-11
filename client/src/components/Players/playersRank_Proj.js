@@ -23,9 +23,9 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
     const handleRankChange = (e, player_id) => {
         let r = rankings
         const prevRank = rankings[player_id].rank_ecr
-        const newRank = e.target.value
+        const newRank = parseInt(e.target.value) || ' '
 
-        if ((parseInt(newRank) >= 0 && parseInt(newRank) <= 1000) || newRank.trim() === '') {
+        if ((newRank >= 0 && newRank <= 1000) || e.target.value.trim() === '') {
             Object.keys(rankings)
                 .map((player, index) => {
                     rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr
