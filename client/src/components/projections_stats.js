@@ -56,7 +56,7 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers, schedul
                 ...allplayers[match_id],
                 ...fp_id,
                 gametime: (day === undefined || hour === undefined ? 99.99 :
-                    parseFloat(`${day < 4 ? day + 7 : day}.${hour}`)
+                    parseFloat(`${day < 4 ? day + 7 : day}.${hour.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`)
                 ),
                 gametime_day: day || 99,
                 gametime_hour: hour || 99
@@ -147,7 +147,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             position_map[slot].includes(allplayers[op]?.position)
         )
 
-        const isInOptimal = optimal_options.length > 1 ? optimal_lineup.includes(cur_id) : true
+        const isInOptimal = optimal_lineup.includes(cur_id)
 
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
@@ -172,7 +172,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     lineup_check = lineup_check.map((lc) => {
         let isInOptimalOrdered;
         let tv_slot = '***'
-        if (lc.gametime < 7 && lc.isInOptimal) {
+        if (lc.gametime < 7.13 && lc.isInOptimal) {
             const isInFlex = lc.slot !== allplayers[lc.cur_id]?.position
             const samePos = lineup_check.filter(x =>
                 allplayers[x.cur_id]?.position === allplayers[lc.cur_id]?.position &&
@@ -198,10 +198,6 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
                 tv_slot = 'MNF'
             }
             isInOptimalOrdered = (!isInFlex && samePos.length > 0) ? 'L' : null
-        } else {
-            if (Math.round(lc.gametime) === 7) {
-                tv_slot = lc.gametime < 7.13 ? 'AM' : null
-            }
         }
 
         return {
