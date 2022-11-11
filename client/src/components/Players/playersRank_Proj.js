@@ -25,14 +25,16 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
         const prevRank = rankings[player_id].rank_ecr
         const newRank = e.target.value
 
-        Object.keys(rankings)
-            .map((player, index) => {
-                rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr
-                let incrementedRank = rankings[player].rank_ecr
-                incrementedRank = getNewRank(rankings, prevRank, newRank, player_id, player, incrementedRank)
-                rankings[player].rank_ecr = incrementedRank
-            })
-        setRankings({ ...r })
+        if ((parseInt(newRank) >= 0 && parseInt(newRank) <= 1000) || newRank.trim() === '') {
+            Object.keys(rankings)
+                .map((player, index) => {
+                    rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr
+                    let incrementedRank = rankings[player].rank_ecr
+                    incrementedRank = getNewRank(rankings, prevRank, newRank, player_id, player, incrementedRank)
+                    rankings[player].rank_ecr = incrementedRank
+                })
+            setRankings({ ...r })
+        }
     }
 
     const handleRankSave = () => {
