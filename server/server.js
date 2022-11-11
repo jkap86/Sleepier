@@ -31,7 +31,7 @@ const dailySync = async () => {
     if (week !== state.data.week) {
         app.set('week', state.data.week)
         app.set('stats', [])
-        getProjections(state.data.week)
+        await getProjections(state.data.week)
     }
 }
 dailySync()

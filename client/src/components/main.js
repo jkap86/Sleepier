@@ -13,7 +13,6 @@ const Main = () => {
     const [stateLeagues, setStateLeagues] = useState([]);
     const [stateLeaguemates, setStateLeaguemates] = useState([]);
     const [statePlayerShares, setStatePlayerShares] = useState([]);
-    const [stateStats, setStateStats] = useState([])
 
     axiosRetry(axios, {
         retries: 5,
@@ -155,9 +154,11 @@ const Main = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const allplayers = await axios.get('/allplayers')
-            const weekly_rankings = await axios.get('/weeklyrankings')
-            const schedule = await axios.get('/schedule')
+            const [allplayers, weekly_rankings, schedule] = await Promise.all([
+                await axios.get('/allplayers'),
+                await axios.get('/weeklyrankings'),
+                await axios.get('/schedule')
+            ])
             const matched_rankings = await match_weekly_rankings(weekly_rankings.data, allplayers.data, schedule.data)
             setStateAllPlayers(matched_rankings)
         }
@@ -225,7 +226,6 @@ const Main = () => {
             stateLeagues={stateLeagues}
             stateLeaguemates={stateLeaguemates}
             statePlayerShares={statePlayerShares}
-            stateStats={stateStats}
             syncLeague={syncLeague}
             sendRankEdit={setStateAllPlayers}
         />

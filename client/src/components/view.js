@@ -8,7 +8,7 @@ const Players = React.lazy(() => import('./Players/players'));
 const Leaguemates = React.lazy(() => import('./Leaguemates/leaguemates'));
 const PlayersRankProj = React.lazy(() => import('./Players/playersRank_Proj'));
 
-const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague, sendRankEdit, stateStats }) => {
+const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeaguemates, statePlayerShares, syncLeague, sendRankEdit }) => {
     const [stateLeaguesFiltered, setStateLeaguesFiltered] = useState([]);
     const [stateLeaguematesFiltered, setStateLeaguematesFiltered] = useState([]);
     const [statePlayerSharesFiltered, setStatePlayerSharesFiltered] = useState([]);
@@ -257,7 +257,6 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         setIncludeTaxi={setIncludeTaxi}
                         rankMargin={rankMargin}
                         setRankMargin={setRankMargin}
-                        stateStats={stateStats}
                     />
                 </React.Suspense>
             break;

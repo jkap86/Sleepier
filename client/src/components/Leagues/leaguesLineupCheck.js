@@ -5,7 +5,7 @@ import taxi from '../../images/taxi.png';
 const Search = React.lazy(() => import('../search'));
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, includeTaxi, setIncludeTaxi, rankMargin, setRankMargin, stateStats }) => {
+const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, includeTaxi, setIncludeTaxi, rankMargin, setRankMargin }) => {
     const [syncing, setSyncing] = useState(false)
     const [tab, setTab] = useState('Lineup Check');
     const [searched, setSearched] = useState('')
@@ -17,7 +17,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
 
     useEffect(() => {
         const l = prop_leagues.map(l => {
-            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), stateStats)
+            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin))
             const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
             const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id).length
             const so_slots = league_check.filter(slot => !slot.isInOptimal).length
@@ -38,7 +38,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
         })
         setLeagues([...l])
 
-    }, [prop_leagues, includeTaxi, rankMargin, stateStats])
+    }, [prop_leagues, includeTaxi, rankMargin])
 
     useEffect(() => {
         if (rostersVisible !== '' && activeSlot) {
@@ -166,28 +166,23 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                                                     <tr>
                                                         <td colSpan={6}>
                                                             <div className={`nav2`}>
-                                                                {
-                                                                    syncing ? null :
-                                                                        <>
-                                                                            <div>
-                                                                                <p className='red small'>Suboptimal</p>
-                                                                                <br />
-                                                                                <p className='non_qb small'>Non QB in SF</p>
-                                                                            </div>
-                                                                            <div>
-                                                                                <p className='TNF small'>Before Main Slate</p>
-                                                                                <br />
-                                                                                <p className='MNF small'>After Main Slate</p>
-                                                                            </div>
-                                                                            <button
-                                                                                className={'clickable'}
-                                                                                onClick={() => handleSyncLeague(league.league_id, user_id)}
-                                                                            >
-                                                                                Sync League
-                                                                            </button>
-
-                                                                        </>
-                                                                }
+                                                                <div>
+                                                                    <p className='red small'>Suboptimal</p>
+                                                                    <br />
+                                                                    <p className='non_qb small'>Non QB in SF</p>
+                                                                </div>
+                                                                <div>
+                                                                    <p className='TNF small'>Before Main Slate</p>
+                                                                    <br />
+                                                                    <p className='MNF small'>After Main Slate</p>
+                                                                </div>
+                                                                <button
+                                                                    className={'clickable'}
+                                                                    onClick={() => handleSyncLeague(league.league_id, user_id)}
+                                                                    style={{ visibility: `${syncing ? 'hidden' : ''}` }}
+                                                                >
+                                                                    Sync League
+                                                                </button>
                                                             </div>
                                                             <React.Suspense fallback={
                                                                 <div className='logo_wrapper'>

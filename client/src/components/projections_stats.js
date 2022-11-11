@@ -40,7 +40,7 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers, schedul
             const gametime = schedule.find(s =>
                 s.Week === parseInt(fp_id.week) &&
                 ([s.AwayTeam, s.HomeTeam].includes(fp_id.player_team_id.replace('JAC', 'JAX')) && ![s.AwayTeam, s.HomeTeam].includes('BYE'))
-            )?.Date
+            )
 
             let gametime_date;
             let day;
@@ -102,11 +102,14 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
-    let player_ranks = roster.players.filter(x =>
+    let player_ranks = roster.players?.filter(x =>
         (includeTaxi > 0 || !roster.taxi?.includes(x))
     ).map(player => {
-        allplayers[player].rank_ecr = allplayers[player]?.rank_ecr || 999
-        allplayers[player].gametime = allplayers[player]?.gametime || 99.99
+        allplayers[player] = {
+            ...allplayers[player],
+            rank_ecr: allplayers[player]?.rank_ecr || 999,
+            gametime: allplayers[player]?.gametime || 99.99
+        }
         let rank = allplayers[player]?.rank_ecr
         if (!roster.starters?.includes(player)) {
             rank = (rank + rankMargin)
@@ -138,14 +141,13 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
     starting_slots.map((slot, index) => {
         const cur_id = roster.starters[index]
+        const isInOptimal = optimal_lineup.includes(cur_id)
 
         const optimal_options = optimal_lineup.filter(op =>
             !roster.starters.includes(op) &&
             (allplayers[op]?.rank_ecr < allplayers[cur_id]?.rank_ecr) &&
             position_map[slot].includes(allplayers[op]?.position)
         )
-
-        const isInOptimal = optimal_lineup.includes(cur_id)
 
         const slot_abbrev = slot
             .replace('SUPER_FLEX', 'SF')
@@ -168,6 +170,18 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
         })
     })
     lineup_check = lineup_check.map((lc) => {
+        let swaps;
+        if (!lc.isInOptimal && lc.optimal_options.length === 0) {
+            swaps = lineup_check.filter(s =>
+                s.isInOptimal && s.optimal_options.length > 0 &&
+                position_map[lc.slot].includes(allplayers[s.cur_id]?.position) &&
+                position_map[s.slot].includes(allplayers[lc.cur_id]?.position)
+            )
+            if (roster.league_id === '789614048831537152') {
+                console.log(swaps)
+            }
+        }
+
         let isInOptimalOrdered;
         let tv_slot = '***'
         if (lc.gametime < 7.13 && lc.isInOptimal) {
@@ -200,7 +214,9 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
         return {
             ...lc,
+            optimal_options: lc.isInOptimal ? [] : lc.optimal_options,
             isInOptimalOrdered: isInOptimalOrdered,
+            swaps: swaps,
             tv_slot: tv_slot
         }
     })

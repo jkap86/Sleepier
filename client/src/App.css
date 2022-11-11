@@ -834,8 +834,14 @@ table.table2.subs tbody.lineup_option {
   border: 1rem solid var(--color2);
 }
 
-table.table2.subs tbody.lineup_option tr.lineup_option>td {
-  background-color: #152038;
+table.main td.transparent {
+  height: 2.5rem;
+  background-color: transparent;
+  font-weight: 900;
+}
+
+table.table2.subs tr.swap>td {
+  background-color: indigo;
 }
 
 table.table2.league,
