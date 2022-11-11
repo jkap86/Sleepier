@@ -5,8 +5,11 @@ const compression = require('compression')
 const cors = require('cors')
 const axios = require('axios')
 const weekly_rankings = require('./workers/worker_weeklyRankings')
-const leagues = require('./workers/worker_leagues')
-const syncLeague = require('./workers/worker_leagueSync')
+const { getLeagueInfo } = require('./workers/worker_leagues');
+const { getLeagueSync } = require('./workers/worker_leagueSync');
+const NodeCache = require('node-cache')
+
+const myCache = new NodeCache
 
 app.use(compression())
 app.use(cors());
@@ -117,9 +120,61 @@ app.get('/user', async (req, res) => {
     }
 })
 
-app.get('/leagues', leagues)
+app.get('/leagues', async (req, res) => {
+    const user_id = req.query.user_id
+    let leagues_detailed = myCache.get(user_id)
+    if (!leagues_detailed) {
+        console.log('Cache Empty...')
+        try {
+            const leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`, options)
+            leagues_detailed = await getLeagueInfo(leagues?.data, user_id)
+            myCache.set(user_id, leagues_detailed, 60 * 5)
+        } catch (error) {
+            console.log(error)
+        }
+    } else {
+        console.log('From Cache...')
+    }
 
-app.get('/syncleague', syncLeague)
+    res.send({
+        leagues: leagues_detailed
+    })
+})
+
+app.get('/syncleague', async (req, res) => {
+    const league_id = req.query.league_id
+    const user_id = req.query.user_id
+
+    const league = await getLeagueSync(league_id, user_id)
+
+    let leagues = myCache.get(user_id)
+
+    if (leagues) {
+        const leagues_updated = []
+        leagues.map(league_synced => {
+            if (league_synced.league_id === league_id) {
+                leagues_updated.push(league)
+            } else {
+                leagues_updated.push(league_synced)
+            }
+
+        })
+        const now = Date.now()
+        const ttl = myCache.getTtl(user_id)
+        const newTtl = (ttl - now) / 1000
+        const sync = myCache.set(user_id, leagues_updated, newTtl)
+        console.log(sync)
+
+    } else {
+        console.log('Cache Empty...')
+    }
+
+
+    res.send(league)
+})
+
+
+
 
 app.get('*', async (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));

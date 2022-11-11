@@ -1,7 +1,7 @@
-const express = require('express')
-const router = express.Router()
+
 const axios = require('axios')
 const axiosRetry = require('axios-retry')
+
 
 axiosRetry(axios, {
     retries: 5,
@@ -60,18 +60,8 @@ const getLeagueInfo = async (leagues, user_id) => {
     return leagues_detailed
 }
 
-router.get('/leagues', async (req, res) => {
-    const user_id = req.query.user_id
-    let leagues;
-    try {
-        leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`, options)
-    } catch (error) {
-        console.log(error)
-    }
-    const leagues_detailed = await getLeagueInfo(leagues?.data, user_id)
-    res.send({
-        leagues: leagues_detailed
-    })
-})
 
-module.exports = router
+
+module.exports = {
+    getLeagueInfo: getLeagueInfo
+}

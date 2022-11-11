@@ -61,8 +61,6 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers, schedul
                 gametime_day: day || 99,
                 gametime_hour: hour || 99
             }
-
-            console.log(allplayers[match_id].gametime)
         } else {
             console.log(`${fp_id.player_name} NOT MATCHED!!!`)
         }
