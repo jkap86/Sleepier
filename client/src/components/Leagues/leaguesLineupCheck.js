@@ -50,8 +50,11 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
 
     useEffect(() => {
         setActiveSlot(null)
-
     }, [rostersVisible])
+
+    useEffect(() => {
+        setPage(1)
+    }, [searched, prop_leagues])
 
     const handleSyncLeague = (league_id, user_id) => {
         setSyncing(true)
@@ -102,6 +105,19 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
 
     const display = (
         <>
+            {
+                page > 1 ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState - 1)}
+                        >
+                            <td colSpan={6}>PREV PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
             {
                 leagues_display
                     .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)

@@ -59,6 +59,19 @@ const Leaguemates = (props) => {
     const display = (
         <>
             {
+                page > 1 ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState - 1)}
+                        >
+                            <td colSpan={18}>PREV PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
+            {
                 leaguemates_display.slice((page - 1) * 50, ((page - 1) * 50) + 50).map((leaguemate, index) =>
                     <tbody
                         key={`${leaguemate.user_id}_${index}`}

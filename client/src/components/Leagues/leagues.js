@@ -16,7 +16,9 @@ const Leagues = ({ prop_leagues, allplayers, user_id }) => {
     })
 
 
-
+    useEffect(() => {
+        setPage(1)
+    }, [searched, prop_leagues])
 
     const sortLeagues = (sort_by, prop_leagues, initial = false) => {
         let l = prop_leagues ? prop_leagues : leagues

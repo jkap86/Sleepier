@@ -20,42 +20,13 @@ const PlayerLeagues = (props) => {
     }
 
     useEffect(() => {
+        setPage(1)
+    }, [tab])
+
+    useEffect(() => {
         setLeaguesAvailable(props.leagues_available)
     }, [props.leagues_available])
 
-
-    const header_available = (
-        <tr className={`header${props.type} caption`}>
-
-            <th colSpan={1}>League</th>
-        </tr>
-    )
-
-    const leagues_available = (
-        leaguesAvailable?.map((league, index) =>
-            <tr
-                key={`${league.league_id}_${index}`}
-                className={rostersVisible.includes(league.league_id) ? `row${props.type} active` : `row${props.type}`}
-            >
-                <td colSpan={1}>
-                    <table className={`content${props.type} fitted`}>
-                        <tbody>
-                            <tr>
-                                <td colSpan={1} className={'center'}>
-                                    <p onClick={() => toggleRosters(league.league_id)}>
-                                        {
-                                            props.avatar(league.avatar, league.name, 'league')
-                                        }
-                                        {league.name}
-                                    </p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        )
-    )
 
     let leagues_display = tab === 'Owned' ? props.leagues_owned :
         tab === 'Taken' ? props.leagues_taken :
@@ -64,7 +35,7 @@ const PlayerLeagues = (props) => {
 
     return <>
         <div className={`nav${props.type}`}>
-            <ol className="page_numbers">
+            <ol className="page_numbers2">
                 {Array.from(Array(Math.ceil(leagues_display.length / 25)).keys()).map(key => key + 1).map(page_number =>
                     <li className={page === page_number ? 'active clickable' : 'clickable'} key={page_number} onClick={() => setPage(page_number)}>
                         {page_number}
@@ -111,6 +82,8 @@ const PlayerLeagues = (props) => {
                         leagues_owned={props.leagues_owned}
                         type={props.type}
                         avatar={props.avatar}
+                        page={page}
+                        setPage={setPage}
                     />
                 </React.Suspense>
                 : tab === 'Taken' ?
@@ -122,9 +95,11 @@ const PlayerLeagues = (props) => {
                         </div>
                     }>
                         <Leagues_Taken
-                            leagues_taken={props.leagues_taken.slice(0, 25)}
+                            leagues_taken={props.leagues_taken}
                             type={props.type}
                             avatar={props.avatar}
+                            page={page}
+                            setPage={setPage}
                         />
                     </React.Suspense>
                     : tab === 'Available' ?
@@ -136,9 +111,11 @@ const PlayerLeagues = (props) => {
                             </div>
                         }>
                             <Leagues_Available
-                                leagues_available={props.leagues_available.slice(0, 25)}
+                                leagues_available={props.leagues_available}
                                 type={props.type}
                                 avatar={props.avatar}
+                                page={page}
+                                setPage={setPage}
                             />
                         </React.Suspense>
                         : null
@@ -147,4 +124,4 @@ const PlayerLeagues = (props) => {
     </>
 }
 
-export default React.memo(PlayerLeagues);
+export default PlayerLeagues;

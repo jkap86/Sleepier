@@ -34,6 +34,19 @@ const PlayersOwnership = ({ playershares_display, page, setPage, leaguesVisible,
         (
             <>
                 {
+                    page > 1 ?
+                        <tbody>
+                            <tr
+                                className={'clickable'}
+                                onClick={() => setPage(prevState => prevState - 1)}
+                            >
+                                <td colSpan={16}>PREV PAGE</td>
+                            </tr>
+                        </tbody>
+                        :
+                        null
+                }
+                {
                     playershares_display
                         .slice((page - 1) * 25, ((page - 1) * 25) + 25).map((player, index) =>
                             <tbody

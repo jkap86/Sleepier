@@ -44,6 +44,19 @@ const LeaguesStandings = ({ sortLeagues, leagues_display, page, setPage, rowRef,
     const display = (
         <>
             {
+                page > 1 ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState - 1)}
+                        >
+                            <td colSpan={13}>PREV PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
+            {
                 leagues_display
                     .slice(Math.max((page - 1) * 25, 0), ((page - 1) * 25) + 25)
                     .map((league, index) =>

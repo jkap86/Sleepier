@@ -483,7 +483,13 @@ div.page_numbers_wrapper {
   margin: auto;
 }
 
-ol.page_numbers {
+ol.page_numbers2 {
+  position: absolute;
+  left: 0;
+}
+
+ol.page_numbers,
+ol.page_numbers2 {
   list-style: none;
   display: flex;
   margin: auto;
@@ -499,13 +505,15 @@ ol.page_numbers {
   filter: drop-shadow(0 0 1rem var(--color2));
 }
 
-ol.page_numbers>li {
+ol.page_numbers>li,
+ol.page_numbers2>li {
   margin: 0.5rem;
   padding: 0.5rem;
   border: 0.5rem ridge var(--color6);
 }
 
-ol.page_numbers>li.active {
+ol.page_numbers>li.active,
+ol.page_numbers2>li.active {
   color: var(--color2);
   border: 0.5rem ridge var(--color2);
 }

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
-const Leagues_Owned = ({ leagues_owned, type, avatar }) => {
+const Leagues_Owned = ({ leagues_owned, type, avatar, page, setPage }) => {
     const [rostersVisible, setRostersVisible] = useState([]);
-    const [page, setPage] = useState(1)
     const [filterStatus, setFilterStatus] = useState('All')
 
     const toggleRosters = (league_id) => {
@@ -52,8 +51,22 @@ const Leagues_Owned = ({ leagues_owned, type, avatar }) => {
                 </tr>
             </thead>
             {
+                page > 1 ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState - 1)}
+                        >
+                            <td colSpan={15}>PREV PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
+            {
                 leagues_owned
                     .filter(x => filterStatus === 'All' || filterStatus === x.status)
+                    .slice((page - 1) * 25, ((page - 1) * 25) + 25)
                     .map((league, index) =>
                         <tbody
                             key={`${league.league_id}_${index}`}
@@ -124,8 +137,21 @@ const Leagues_Owned = ({ leagues_owned, type, avatar }) => {
                         </tbody>
                     )
             }
+            {
+                (((page - 1) * 25) + 25) < leagues_owned.length ?
+                    <tbody>
+                        <tr
+                            className={'clickable'}
+                            onClick={() => setPage(prevState => prevState + 1)}
+                        >
+                            <td colSpan={15}>NEXT PAGE</td>
+                        </tr>
+                    </tbody>
+                    :
+                    null
+            }
         </table>
     </>
 }
 
-export default React.memo(Leagues_Owned);
+export default Leagues_Owned;

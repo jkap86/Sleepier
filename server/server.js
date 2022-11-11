@@ -128,7 +128,7 @@ app.get('/leagues', async (req, res) => {
         try {
             const leagues = await axios.get(`https://api.sleeper.app/v1/user/${user_id}/leagues/nfl/2022`, options)
             leagues_detailed = await getLeagueInfo(leagues?.data, user_id)
-            myCache.set(user_id, leagues_detailed, 60 * 5)
+            myCache.set(user_id, leagues_detailed, 60 * 15)
         } catch (error) {
             console.log(error)
         }
