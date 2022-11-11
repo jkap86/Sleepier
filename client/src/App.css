@@ -591,6 +591,10 @@ p.red {
   font-weight: 900;
 }
 
+p.red.small {
+  font-weight: initial;
+}
+
 p.green {
   color: green;
   filter: brightness(2);
@@ -782,7 +786,7 @@ table.table1 {
   border-spacing: 0.25rem 0;
 }
 
-table.table2.lineup td.sub {
+td.red {
   border: 0.25rem solid red;
   color: red;
 }
@@ -795,22 +799,23 @@ p.TNF {
   color: var(--wr);
 }
 
-p.MNF,
-p.TNF {
-  width: fit-content;
-  height: fit-content;
-  display: inline-block;
-  margin: 0;
+p.non_qb {
+  color: fuchsia;
 }
 
-td.MNF,
-td.SNF {
+td.after_main_slate {
   border: 0.25rem solid var(--te);
+  color: var(--te);
 }
 
-td.TNF,
-td.AM {
+td.before_main_slate {
   border: 0.25rem solid var(--wr);
+  color: var(--wr)
+}
+
+td.non_qb_sf {
+  border: .25rem solid fuchsia;
+  color: fuchsia;
 }
 
 table.table2.lineup,

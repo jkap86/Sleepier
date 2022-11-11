@@ -12,10 +12,11 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
             >
                 <td colSpan={1}
                     className={
-                        !slot.isInOptimal || slot.cur_id === 0 || slot.cur_rank === 1000 ||
-                            ['E', 'L'].includes(slot.isInOptimalOrdered) || (slot.cur_abbrev === 'SF' && allplayers[slot.cur_id]?.position !== 'QB')
-                            ? 'sub'
-                            : null
+                        !slot.isInOptimal ? 'red'
+                            : slot.isInOptimalOrdered === 'E' ? 'after_main_slate'
+                                : slot.isInOptimalOrdered === 'L' ? 'before_main_slate'
+                                    : (slot.slot_abbrev === 'SF' && allplayers[slot.cur_id]?.position !== 'QB') ? 'non_qb_sf'
+                                        : null
                     }
                 >
                     {slot.slot_abbrev}

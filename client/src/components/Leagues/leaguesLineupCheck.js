@@ -64,11 +64,11 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
     const header = (
         <>
             <tr className='main_header double'>
-                <th colSpan={4}></th>
-                <th colSpan={6}># Slots</th>
+                <th colSpan={2}></th>
+                <th colSpan={4}># Slots</th>
             </tr>
             <tr className="main_header double">
-                <th colSpan={4}
+                <th colSpan={2}
                     className={'clickable'}
                 >
                     League
@@ -76,12 +76,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                 <th colSpan={1}
                     className={'small clickable'}
                 >
-                    Empty
-                </th>
-                <th colSpan={1}
-                    className={'small clickable'}
-                >
-                    Bye
+                    Suboptimal
                 </th>
                 <th colSpan={1}
                     className={'small clickable'}
@@ -97,11 +92,6 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                     className={'small clickable'}
                 >
                     Non QBs in SF
-                </th>
-                <th colSpan={1}
-                    className={'small clickable'}
-                >
-                    Subopt.
                 </th>
             </tr>
         </>
@@ -121,7 +111,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                             className={rostersVisible === league.league_id ? 'active' : null}
                         >
                             <tr>
-                                <td colSpan={10} >
+                                <td colSpan={6} >
                                     <table className={`table${1}`}>
                                         <tbody>
                                             <tr
@@ -129,7 +119,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                                                 className={rostersVisible === league.league_id ? 'main_row active clickable' : 'main_row clickable'}
                                                 onClick={() => setRostersVisible(prevState => prevState === league.league_id ? '' : league.league_id)}
                                             >
-                                                <td colSpan={4} className={'left'}>
+                                                <td colSpan={2} className={'left'}>
                                                     <p>
                                                         {
                                                             avatar(league.avatar, league.name, 'league')
@@ -139,18 +129,11 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                                                 </td>
                                                 <td colSpan={1}>
                                                     {
-                                                        league.empty_slots > 0 ?
-                                                            <p className='red'>{league.empty_slots}</p>
+                                                        league.so_slots > 0 ?
+                                                            <p className='red'>{league.so_slots}</p>
                                                             :
                                                             <i className={'fa fa-check green'}></i>
-                                                    }
-                                                </td>
-                                                <td colSpan={1}>
-                                                    {
-                                                        league.bye_slots > 0 ?
-                                                            <p className='red'>{league.bye_slots}</p>
-                                                            :
-                                                            <i className={'fa fa-check green'}></i>
+
                                                     }
                                                 </td>
                                                 <td colSpan={1}>
@@ -177,35 +160,32 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                                                             <i className={'fa fa-check green'}></i>
                                                     }
                                                 </td>
-                                                <td colSpan={1}>
-                                                    {
-                                                        league.so_slots > 0 ?
-                                                            <p className='red'>{league.so_slots}</p>
-                                                            :
-                                                            <i className={'fa fa-check green'}></i>
-
-                                                    }
-                                                </td>
                                             </tr>
                                             {
                                                 rostersVisible !== league.league_id ? null :
                                                     <tr>
-                                                        <td colSpan={10}>
+                                                        <td colSpan={6}>
                                                             <div className={`nav2`}>
                                                                 {
                                                                     syncing ? null :
                                                                         <>
+                                                                            <div>
+                                                                                <p className='red small'>Suboptimal</p>
+                                                                                <br />
+                                                                                <p className='non_qb small'>Non QB in SF</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className='TNF small'>Before Main Slate</p>
+                                                                                <br />
+                                                                                <p className='MNF small'>After Main Slate</p>
+                                                                            </div>
                                                                             <button
                                                                                 className={'clickable'}
                                                                                 onClick={() => handleSyncLeague(league.league_id, user_id)}
                                                                             >
                                                                                 Sync League
                                                                             </button>
-                                                                            <div>
-                                                                                <p className='TNF small'>Before Main Slate</p>
-                                                                                <br />
-                                                                                <p className='MNF small'>After Main Slate</p>
-                                                                            </div>
+
                                                                         </>
                                                                 }
                                                             </div>
@@ -243,7 +223,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                             className={'clickable'}
                             onClick={() => setPage(prevState => prevState + 1)}
                         >
-                            <td colSpan={10}>NEXT PAGE</td>
+                            <td colSpan={6}>NEXT PAGE</td>
                         </tr>
                     </tbody>
                     :
