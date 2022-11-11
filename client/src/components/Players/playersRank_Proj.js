@@ -16,8 +16,6 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
     const [filterPosition, setFilterPosition] = useState('W/R/T/Q')
     const [searched, setSearched] = useState('')
 
-    console.log(filterPosition)
-
     useEffect(() => {
         setRankings(allplayers)
     }, [allplayers])
@@ -25,7 +23,7 @@ const PlayersRankProj = ({ playershares, allplayers, sendRankEdit }) => {
     const handleRankChange = (e, player_id) => {
         let r = rankings
         const prevRank = rankings[player_id].rank_ecr
-        const newRank = e.target.value
+        const newRank = parseInt(e.target.value)
         Object.keys(rankings)
             .map((player, index) => {
                 rankings[player].original_rank = rankings[player].original_rank || rankings[player].rank_ecr

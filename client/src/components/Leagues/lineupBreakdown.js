@@ -208,7 +208,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                                                     lineup_check.find(x => x.cur_id === bp)?.slot_abbrev || 'BN'
                                         }
                                     </td>
-                                    <td colSpan={6} className={'left'}>
+                                    <td colSpan={6} className={'left'} onClick={() => console.log(allplayers[bp])}>
                                         <p>
                                             {
                                                 avatar(bp, allplayers[bp]?.full_name, 'player')

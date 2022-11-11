@@ -38,7 +38,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
         })
         setLeagues([...l])
 
-    }, [prop_leagues, includeTaxi, rankMargin])
+    }, [prop_leagues, includeTaxi, rankMargin, allplayers])
 
     useEffect(() => {
         if (rostersVisible !== '' && activeSlot) {
