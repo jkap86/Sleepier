@@ -37,7 +37,6 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                                 </p>
                                 : null
                         }
-
                     </p>
                 </td>
                 <td className={slot.tv_slot}>
@@ -60,7 +59,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
         </tbody >
     )
     const optimal_options = (
-        !activeSlot ? roster.players.filter(p => !roster.starters?.includes(p) && !roster.taxi?.includes(p)) :
+        !activeSlot ? roster.players.filter(p => !roster.starters?.includes(p) && (includeTaxi > 0 || !roster.taxi?.includes(p))) :
             activeSlot ? activeSlot.optimal_options : null
     )
 

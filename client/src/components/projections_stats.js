@@ -111,8 +111,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     const now = parseFloat(`${day < 4 ? day + 7 : day}.${hour.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`)
 
     let player_ranks = roster.players?.filter(x =>
-        (includeTaxi > 0 || !roster.taxi?.includes(x)) &&
-        (includeLocked > 0 || (!roster.starters.includes(x) && allplayers[x]?.gametime < now))
+        (includeTaxi > 0 || !roster.taxi?.includes(x))
     ).map(player => {
 
         allplayers[player] = {
@@ -126,6 +125,13 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
         } else {
             rank = allplayers[player]?.rank_ecr
+        }
+        if (includeLocked < 0 && allplayers[player]?.gametime < now) {
+            if (roster.starters.includes(player)) {
+                rank = 0
+            } else {
+                rank = 1000
+            }
         }
 
         return {
@@ -142,8 +148,7 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
             .sort((a, b) => a.rank - b.rank || a.gametime_day - b.gametime_day || a.gametime_hour - b.gametime_hour)
 
-        const optimal_player = slot_options[0]?.rank < 999 &&
-            (!(slot_options[0]?.gametime < now) || includeLocked > 0) ? slot_options[0]?.id :
+        const optimal_player = slot_options[0]?.rank < 999 ? slot_options[0]?.id :
             roster.starters[index]
         player_ranks_filtered = player_ranks_filtered.filter(p => p.id !== optimal_player)
         optimal_lineup[index] = optimal_player
