@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { avatar } from "../misc_functions";
 import { getLineupCheck } from '../projections_stats';
 import taxi from '../../images/taxi.png';
+import locked from '../../images/locked.png';
 const Search = React.lazy(() => import('../search'));
 const LineupBreakdown = React.lazy(() => import('./lineupBreakdown'));
 
-const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, includeTaxi, setIncludeTaxi, rankMargin, setRankMargin }) => {
+const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, includeTaxi, setIncludeTaxi, rankMargin, setRankMargin, includeLocked, setIncludeLocked }) => {
     const [syncing, setSyncing] = useState(false)
     const [tab, setTab] = useState('Lineup Check');
     const [searched, setSearched] = useState('')
@@ -17,7 +18,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
 
     useEffect(() => {
         const l = prop_leagues.map(l => {
-            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin))
+            const league_check = getLineupCheck(l.roster_positions, l.userRoster, allplayers, parseInt(includeTaxi), parseInt(rankMargin), parseInt(includeLocked))
             const empty_slots = l.userRoster.starters?.filter(s => s === '0').length
             const bye_slots = league_check.filter(slot => slot.cur_rank === 1000).map(slot => slot.cur_id).length
             const so_slots = league_check.filter(slot => !slot.isInOptimal).length
@@ -38,7 +39,7 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
         })
         setLeagues([...l])
 
-    }, [prop_leagues, includeTaxi, rankMargin, allplayers])
+    }, [prop_leagues, includeTaxi, includeLocked, rankMargin, allplayers])
 
     useEffect(() => {
         if (rostersVisible !== '' && activeSlot) {
@@ -270,6 +271,17 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                 </button>
             </div>
             <div className={'lineupcheck_options'}>
+                <div className={'lineupcheck_option'}>
+                    <img
+                        className={'taxi'}
+                        src={locked}
+                    />
+                    <i
+                        onClick={() => setIncludeLocked(prevState => prevState === 1 ? -1 : 1)}
+                        className={`fa fa-ban clickable ${includeLocked > 0 ? 'hidden' : null}`}>
+
+                    </i>
+                </div>
                 <div className={'lineupcheck_option'}>
                     <img
                         className={'taxi'}

@@ -17,6 +17,7 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
     const [type2, setType2] = useState('All');
     const [includeTaxi, setIncludeTaxi] = useState(1)
     const [rankMargin, setRankMargin] = useState(0)
+    const [includeLocked, setIncludeLocked] = useState(1)
 
     useEffect(() => {
         const fetchFiltered = () => {
@@ -254,6 +255,8 @@ const View = ({ isLoading, stateAllPlayers, state_user, stateLeagues, stateLeagu
                         syncLeague={syncLeague}
                         user_id={state_user.user_id}
                         includeTaxi={includeTaxi}
+                        includeLocked={includeLocked}
+                        setIncludeLocked={setIncludeLocked}
                         setIncludeTaxi={setIncludeTaxi}
                         rankMargin={rankMargin}
                         setRankMargin={setRankMargin}

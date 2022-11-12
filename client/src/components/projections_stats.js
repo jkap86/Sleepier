@@ -40,16 +40,17 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers, schedul
             const gametime = schedule.find(s =>
                 s.Week === parseInt(fp_id.week) &&
                 ([s.AwayTeam, s.HomeTeam].includes(fp_id.player_team_id.replace('JAC', 'JAX')) && ![s.AwayTeam, s.HomeTeam].includes('BYE'))
-            )
+            )?.Date
 
             let gametime_date;
             let day;
             let hour;
+            let time;
             if (gametime) {
                 gametime_date = new Date(gametime)
                 day = gametime_date.getDay()
                 hour = gametime_date.getHours()
-
+                time = gametime_date.getTime()
             }
 
             allplayers[match_id] = {
@@ -59,7 +60,8 @@ export const match_weekly_rankings = async (weekly_rankings, allplayers, schedul
                     parseFloat(`${day < 4 ? day + 7 : day}.${hour.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`)
                 ),
                 gametime_day: day || 99,
-                gametime_hour: hour || 99
+                gametime_hour: hour || 99,
+                gametime_time: time
             }
         } else {
             console.log(`${fp_id.player_name} NOT MATCHED!!!`)
@@ -87,7 +89,7 @@ export const getNewRank = (rankings, prevRank, newRank, player_id, playerToIncre
     return incrementedRank
 }
 
-export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin) => {
+export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi, rankMargin, includeLocked) => {
 
     const position_map = {
         'QB': ['QB'],
@@ -102,9 +104,17 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
 
     const starting_slots = roster_positions.filter(x => Object.keys(position_map).includes(x))
 
+    const date = new Date()
+    const day = date.getDay()
+    const hour = date.getHours()
+
+    const now = parseFloat(`${day < 4 ? day + 7 : day}.${hour.toLocaleString("en-US", { minimumIntegerDigits: 2 })}`)
+
     let player_ranks = roster.players?.filter(x =>
-        (includeTaxi > 0 || !roster.taxi?.includes(x))
+        (includeTaxi > 0 || !roster.taxi?.includes(x)) &&
+        (includeLocked > 0 || (!roster.starters.includes(x) && allplayers[x]?.gametime < now))
     ).map(player => {
+
         allplayers[player] = {
             ...allplayers[player],
             rank_ecr: allplayers[player]?.rank_ecr || 999,
@@ -132,7 +142,9 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
             .filter(p => position_map[slot].includes(allplayers[p.id]?.position))
             .sort((a, b) => a.rank - b.rank || a.gametime_day - b.gametime_day || a.gametime_hour - b.gametime_hour)
 
-        const optimal_player = slot_options[0]?.rank < 999 ? slot_options[0]?.id : roster.starters[index]
+        const optimal_player = slot_options[0]?.rank < 999 &&
+            (!(slot_options[0]?.gametime < now) || includeLocked > 0) ? slot_options[0]?.id :
+            roster.starters[index]
         player_ranks_filtered = player_ranks_filtered.filter(p => p.id !== optimal_player)
         optimal_lineup[index] = optimal_player
     })
@@ -177,9 +189,6 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
                 position_map[lc.slot].includes(allplayers[s.cur_id]?.position) &&
                 position_map[s.slot].includes(allplayers[lc.cur_id]?.position)
             )
-            if (roster.league_id === '789614048831537152') {
-                console.log(swaps)
-            }
         }
 
         let isInOptimalOrdered;
