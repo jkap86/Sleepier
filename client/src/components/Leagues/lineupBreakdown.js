@@ -63,7 +63,9 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
             activeSlot ? activeSlot.optimal_options : null
     )
 
-    const swaps = activeSlot?.swaps
+    const swaps_out = activeSlot?.swaps?.out
+    const swaps_in = activeSlot?.swaps?.in
+
 
     return <>
         <table className={`table${type} lineup`}>
@@ -80,113 +82,124 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
 
         <table className={`table${type} subs`}>
             {
-                <thead>
-                    <tr className={'double'}>
-                        <th colSpan={1}>Slot</th>
-                        <th colSpan={6}>Starter</th>
-                        <th colSpan={1}>Rank</th>
-                        <th colSpan={2}>Pos Rank</th>
-                    </tr>
-                    <tr className={'double'}>
-                        <th colSpan={10}>{!activeSlot ? 'Bench' : swaps ? 'Swap with' : 'Sub in'}</th>
-                    </tr>
-                </thead>
-            }
-            {
-                swaps?.length > 0 ?
-                    swaps
+                swaps_out?.length > 0 ?
+                    swaps_out
                         ?.sort((a, b) => (roster.taxi?.includes(a.swap) - roster.taxi?.includes(b.swap)) ||
                             (allplayers[a.swap]?.rank_ecr || 999) - (allplayers[b.swap]?.rank_ecr || 999))
                         ?.map((swap, index) =>
                             <tbody key={`${swap}_${index}`}
                             >
-                                <tr>
+
+                                <tr className={'title'}>
+                                    <td colSpan={10} className={'transparent'}>Sub out</td>
+                                </tr>
+                                <tr className="swap">
                                     <td colSpan={1}>
                                         {
-                                            roster.taxi?.includes(swap.cur_id) ? 'Taxi' :
-                                                roster.reserve?.includes(swap.cur_id) ? 'IR' :
-                                                    lineup_check.find(x => x.cur_id === swap.cur_id)?.slot_abbrev || 'BN'
+                                            roster.taxi?.includes(swap) ? 'Taxi' :
+                                                roster.reserve?.includes(swap) ? 'IR' :
+                                                    lineup_check.find(x => x.cur_id === swap)?.slot_abbrev || 'BN'
                                         }
                                     </td>
                                     <td colSpan={6} className={'left'}>
                                         <p>
                                             {
-                                                avatar(swap.cur_id, allplayers[swap.cur_id]?.full_name, 'player')
+                                                avatar(swap, allplayers[swap]?.full_name, 'player')
                                             }
-                                            {`${allplayers[swap.cur_id]?.position} ${allplayers[swap.cur_id]?.full_name} ${allplayers[swap.cur_id]?.team || 'FA'}`}
+                                            {`${allplayers[swap]?.position} ${allplayers[swap]?.full_name} ${allplayers[swap]?.team || 'FA'}`}
                                             {
-                                                allplayers[swap.cur_id]?.injury ?
+                                                allplayers[swap]?.injury ?
                                                     <p className={'red small'}>
-                                                        {allplayers[swap.cur_id]?.injury}
+                                                        {allplayers[swap]?.injury}
                                                     </p>
                                                     : null
                                             }
                                         </p>
                                     </td>
                                     <td colSpan={1}>
-                                        {allplayers[swap.cur_id]?.rank_ecr === 1000 ? 'BYE' : allplayers[swap.cur_id]?.rank_ecr || 999}
+                                        {allplayers[swap]?.rank_ecr === 1000 ? 'BYE' : allplayers[swap]?.rank_ecr || 999}
                                     </td>
                                     <td colSpan={2}>
                                         {
-                                            allplayers[swap.cur_id]?.rank_ecr >= 999 ? '-' :
-                                                allplayers[swap.cur_id]?.position === 'FB' ? 'RB' : allplayers[swap.cur_id]?.position + "" +
+                                            allplayers[swap]?.rank_ecr >= 999 ? '-' :
+                                                allplayers[swap]?.position === 'FB' ? 'RB' : allplayers[swap]?.position + "" +
                                                     (Object.keys(allplayers)
                                                         .filter(ap =>
-                                                            allplayers[ap].position === allplayers[swap.cur_id]?.position ||
-                                                            (allplayers[swap.cur_id]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                                            allplayers[ap].position === allplayers[swap]?.position ||
+                                                            (allplayers[swap]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
                                                         )
                                                         .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
-                                                        .indexOf(swap.cur_id) + 1)
+                                                        .indexOf(swap) + 1)
                                         }
                                     </td>
                                 </tr>
+                            </tbody>
+                        )
+                    : null
+            }
+
+            {
+                <thead>
+                    <tr className={'single'}>
+                        <th colSpan={1}>Slot</th>
+                        <th colSpan={6}>Starter</th>
+                        <th colSpan={1}>Rank</th>
+                        <th colSpan={2}>Pos Rank</th>
+                    </tr>
+                </thead>
+            }
+            {
+                swaps_in?.length > 0 ?
+                    swaps_in
+                        ?.sort((a, b) => (roster.taxi?.includes(a.swap) - roster.taxi?.includes(b.swap)) ||
+                            (allplayers[a.swap]?.rank_ecr || 999) - (allplayers[b.swap]?.rank_ecr || 999))
+                        ?.map((swap, index) =>
+                            <tbody key={`${swap}_${index}`}
+                            >
+
                                 <tr className={'title'}>
                                     <td colSpan={10} className={'transparent'}>Sub in</td>
                                 </tr>
-                                {
-                                    swap.optimal_options.map(opt =>
-                                        <tr key={opt} className={'swap'}>
-                                            <td colSpan={1}>
-                                                {
-                                                    roster.taxi?.includes(opt) ? 'Taxi' :
-                                                        roster.reserve?.includes(opt) ? 'IR' :
-                                                            lineup_check.find(x => x.cur_id === opt)?.slot_abbrev || 'BN'
-                                                }
-                                            </td>
-                                            <td colSpan={6} className={'left'}>
-                                                <p>
-                                                    {
-                                                        avatar(opt, allplayers[opt]?.full_name, 'player')
-                                                    }
-                                                    {`${allplayers[opt]?.position} ${allplayers[opt]?.full_name} ${allplayers[opt]?.team || 'FA'}`}
-                                                    {
-                                                        allplayers[opt]?.injury ?
-                                                            <p className={'red small'}>
-                                                                {allplayers[opt]?.injury}
-                                                            </p>
-                                                            : null
-                                                    }
-                                                </p>
-                                            </td>
-                                            <td colSpan={1}>
-                                                {allplayers[opt]?.rank_ecr === 1000 ? 'BYE' : allplayers[opt]?.rank_ecr || 999}
-                                            </td>
-                                            <td colSpan={2}>
-                                                {
-                                                    allplayers[opt]?.rank_ecr >= 999 ? '-' :
-                                                        allplayers[opt]?.position === 'FB' ? 'RB' : allplayers[opt]?.position + "" +
-                                                            (Object.keys(allplayers)
-                                                                .filter(ap =>
-                                                                    allplayers[ap].position === allplayers[opt]?.position ||
-                                                                    (allplayers[opt]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
-                                                                )
-                                                                .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
-                                                                .indexOf(opt) + 1)
-                                                }
-                                            </td>
-                                        </tr>
-                                    )
-                                }
+                                <tr className="swap">
+                                    <td colSpan={1}>
+                                        {
+                                            roster.taxi?.includes(swap) ? 'Taxi' :
+                                                roster.reserve?.includes(swap) ? 'IR' :
+                                                    lineup_check.find(x => x.cur_id === swap)?.slot_abbrev || 'BN'
+                                        }
+                                    </td>
+                                    <td colSpan={6} className={'left'}>
+                                        <p>
+                                            {
+                                                avatar(swap, allplayers[swap]?.full_name, 'player')
+                                            }
+                                            {`${allplayers[swap]?.position} ${allplayers[swap]?.full_name} ${allplayers[swap]?.team || 'FA'}`}
+                                            {
+                                                allplayers[swap]?.injury ?
+                                                    <p className={'red small'}>
+                                                        {allplayers[swap]?.injury}
+                                                    </p>
+                                                    : null
+                                            }
+                                        </p>
+                                    </td>
+                                    <td colSpan={1}>
+                                        {allplayers[swap]?.rank_ecr === 1000 ? 'BYE' : allplayers[swap]?.rank_ecr || 999}
+                                    </td>
+                                    <td colSpan={2}>
+                                        {
+                                            allplayers[swap]?.rank_ecr >= 999 ? '-' :
+                                                allplayers[swap]?.position === 'FB' ? 'RB' : allplayers[swap]?.position + "" +
+                                                    (Object.keys(allplayers)
+                                                        .filter(ap =>
+                                                            allplayers[ap].position === allplayers[swap]?.position ||
+                                                            (allplayers[swap]?.position === 'FB' && ['FB', 'RB'].includes(allplayers[ap].position))
+                                                        )
+                                                        .sort((a, b) => (allplayers[a].rank_ecr || 999) - (allplayers[b].rank_ecr || 999))
+                                                        .indexOf(swap) + 1)
+                                        }
+                                    </td>
+                                </tr>
                             </tbody>
                         )
                     : null

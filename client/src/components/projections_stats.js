@@ -189,11 +189,15 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     lineup_check = lineup_check.map((lc) => {
         let swaps;
         if (!lc.isInOptimal && lc.optimal_options.length === 0) {
-            swaps = lineup_check.filter(s =>
-                s.isInOptimal && s.optimal_options.length > 0 &&
-                position_map[lc.slot].includes(allplayers[s.cur_id]?.position) &&
-                position_map[s.slot].includes(allplayers[lc.cur_id]?.position)
-            )
+
+
+
+            swaps = {
+                in: optimal_lineup.filter(opt => !roster.starters.includes(opt)),
+                out: roster.starters.filter(s =>
+                    !optimal_lineup.includes(s) && s !== lc.cur_id
+                )
+            }
         }
 
         let isInOptimalOrdered;
