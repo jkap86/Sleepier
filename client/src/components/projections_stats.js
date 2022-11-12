@@ -163,7 +163,8 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
         const optimal_options = optimal_lineup.filter(op =>
             !roster.starters.includes(op) &&
             (allplayers[op]?.rank_ecr < allplayers[cur_id]?.rank_ecr) &&
-            position_map[slot].includes(allplayers[op]?.position)
+            position_map[slot].includes(allplayers[op]?.position) &&
+            optimal_lineup.includes(op)
         )
 
         const slot_abbrev = slot
@@ -189,15 +190,15 @@ export const getLineupCheck = (roster_positions, roster, allplayers, includeTaxi
     lineup_check = lineup_check.map((lc) => {
         let swaps;
         if (!lc.isInOptimal && lc.optimal_options.length === 0) {
-
-
-
-            swaps = {
-                in: optimal_lineup.filter(opt => !roster.starters.includes(opt)),
-                out: roster.starters.filter(s =>
-                    !optimal_lineup.includes(s) && s !== lc.cur_id
+            const swap_out = lineup_check
+                .filter(x =>
+                    x.isInOptimal && x.optimal_options.length > 0 &&
+                    position_map[x.slot].includes(allplayers[lc.cur_id]?.position) &&
+                    position_map[lc.slot].includes(allplayers[x.cur_id]?.position)
                 )
-            }
+                .sort((a, b) => a.cur_rank - b.cur_rank)
+
+            swaps = swap_out[0]
         }
 
         let isInOptimalOrdered;

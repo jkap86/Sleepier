@@ -796,7 +796,7 @@ table.table1 {
 }
 
 td.red {
-  border: 0.25rem solid red;
+  border: 0.5rem solid red;
   color: red;
 }
 
@@ -812,18 +812,18 @@ p.non_qb {
   color: fuchsia;
 }
 
-td.after_main_slate {
-  border: 0.25rem solid var(--te);
+td.later {
+  border: 0.5rem solid var(--te);
   color: var(--te);
 }
 
-td.before_main_slate {
-  border: 0.25rem solid var(--wr);
+td.earlier {
+  border: 0.5rem solid var(--wr);
   color: var(--wr)
 }
 
 td.non_qb_sf {
-  border: .25rem solid fuchsia;
+  border: .5rem solid fuchsia;
   color: fuchsia;
 }
 

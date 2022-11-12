@@ -189,9 +189,9 @@ const LeaguesLineupCheck = ({ prop_leagues, allplayers, syncLeague, user_id, inc
                                                                     <p className='non_qb small'>Non QB in SF</p>
                                                                 </div>
                                                                 <div>
-                                                                    <p className='TNF small'>Before Main Slate</p>
+                                                                    <p className='TNF small'>Early in Flex</p>
                                                                     <br />
-                                                                    <p className='MNF small'>After Main Slate</p>
+                                                                    <p className='MNF small'>Late not in Flex</p>
                                                                 </div>
                                                                 <button
                                                                     className={'clickable'}
