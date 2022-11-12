@@ -98,7 +98,7 @@ const LineupBreakdown = ({ type, roster, lineup_check, avatar, allplayers, activ
                         <tr className="swap">
                             <td colSpan={1}>
                                 {
-                                    swap.slot
+                                    swap.slot_abbrev
                                 }
                             </td>
                             <td colSpan={3} className={'left'}>
